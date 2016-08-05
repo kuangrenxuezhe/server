@@ -23,7 +23,7 @@
 #ifndef NN_MUTEX_INCLUDED
 #define NN_MUTEX_INCLUDED
 
-#ifdef NN_HAVE_WINDOWS
+#ifdef WINDOWS_PLATFORM
 #include "win.h"
 #else
 #include <pthread.h>
@@ -32,7 +32,7 @@
 struct nn_mutex {
     /*  NB: The fields of this structure are private to the mutex
         implementation. */
-#ifdef NN_HAVE_WINDOWS
+#ifdef WINDOWS_PLATFORM
     CRITICAL_SECTION cs;
     DWORD owner;
     int debug;

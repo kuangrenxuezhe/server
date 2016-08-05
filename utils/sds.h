@@ -51,7 +51,7 @@ struct __attribute__ ((__packed__)) sdshdr64 {
 #define SDS_HDR(T,s) ((struct sdshdr##T *)((s)-(sizeof(struct sdshdr##T))))
 #define SDS_TYPE_5_LEN(f) ((f)>>SDS_TYPE_BITS)
 
-// 返回s当前使用的长度
+/*返回s当前使用的长度*/
 static inline size_t sds_len(const sds s) {
     unsigned char flags = s[-1];
     switch(flags&SDS_TYPE_MASK) {
@@ -69,7 +69,7 @@ static inline size_t sds_len(const sds s) {
     return 0;
 }
 
-// 返回s当前可用长度
+/*返回s当前可用长度*/
 static inline size_t sds_avail(const sds s) {
     unsigned char flags = s[-1];
     switch(flags&SDS_TYPE_MASK) {
@@ -96,7 +96,7 @@ static inline size_t sds_avail(const sds s) {
     return 0;
 }
 
-// 设置s已使用长度
+/* 设置s已使用长度*/
 static inline void sds_set_len(sds s, size_t newlen) {
     unsigned char flags = s[-1];
     switch(flags&SDS_TYPE_MASK) {
@@ -121,7 +121,7 @@ static inline void sds_set_len(sds s, size_t newlen) {
     }
 }
 
-// 增加已使用长度
+/* 增加已使用长度*/
 static inline void sds_inc_len(sds s, size_t inc) {
     unsigned char flags = s[-1];
     switch(flags&SDS_TYPE_MASK) {
@@ -147,7 +147,7 @@ static inline void sds_inc_len(sds s, size_t inc) {
     }
 }
 
-// 返回总长度
+/* 返回总长度*/
 /* sds_alloc() = sds_avail() + sds_len() */
 static inline size_t sds_alloc(const sds s) {
     unsigned char flags = s[-1];
@@ -166,9 +166,7 @@ static inline size_t sds_alloc(const sds s) {
     return 0;
 }
 
-/*
- * 设置总长度值
- */
+/* 设置总长度值*/
 static inline void sds_set_alloc(sds s, size_t newlen) {
     unsigned char flags = s[-1];
     switch(flags&SDS_TYPE_MASK) {
@@ -190,54 +188,40 @@ static inline void sds_set_alloc(sds s, size_t newlen) {
     }
 }
 
-/*
- *带长度的string结构申请
- */
+/*带长度的string结构申请*/
 sds sds_new_len(const void *init, size_t initlen);
-/*
- *不带长度的string结构请
- */
+
+/*不带长度的string结构请*/
 sds sds_new(const char *init);
-/*
- *生成空string结构
- */
+
+/*生成空string结构*/
 sds sds_empty(void);
-/*
- *复制一个string结构
- */
+
+/*复制一个string结构*/
 sds sds_dup(const sds s);
-/*
- *注销一个string结构
- */
+
+/*注销一个string结构*/
 void sds_free(sds s);
-/*
- *扩展len个空间并赋空置
- */
+
+/*扩展len个空间并赋空置*/
 sds sds_grow_zero(sds s, size_t len);
-/*
- *追加len个长度内容到sds中
- */
+
+/*追加len个长度内容到sds中*/
 sds sds_append_len(sds s, const void *t, size_t len);
-/*
- *追加字符串到sds中
- */
+
+/*追加字符串到sds中*/
 sds sds_append_buffer(sds s, const char *t);
-/*
- *追加sds到当前sds中
- */
+
+/*追加sds到当前sds中*/
 sds sds_append_string(sds s, const sds t);
-/*
- *复制长度为len的字符串到sds中
- */
+
+/*复制长度为len的字符串到sds中*/
 sds sds_copy_len(sds s, const char *t, size_t len);
-/*
- *复制字符串到sds中
- */
+
+/*复制字符串到sds中*/
 sds sds_copy(sds s, const char *t);
 
-/*
- *格式化输入内容到sds中
- */
+/*格式化输入内容到sds中*/
 #ifdef __GNUC__
 sds sds_append_printf(sds s, const char *fmt, ...)
     __attribute__((format(printf, 2, 3)));
@@ -259,91 +243,67 @@ sds sds_append_printf(sds s, const char *fmt, ...);
  */
 sds sds_append_format(sds s, char const *fmt, ...);
 
-/*
- *sds前后去除cset中包含的字符
- */
+/*sds前后去除cset中包含的字符*/
 sds sds_trim(sds s, const char *cset);
-/*
- *范围截取
- */
+
+/*范围截取*/
 void sds_range(sds s, int start, int end);
-/*
- *修改sds中的长度到字符串的长度
- */
+
+/*修改sds中的长度到字符串的长度*/
 void sds_update_len(sds s);
-/*
- *清空sds中的内容
- */
+
+/*清空sds中的内容*/
 void sds_clear(sds s);
 
-/*
- *sds内容对比 按照二进制内容对比
- */
+/*sds内容对比 按照二进制内容对比*/
 int sds_cmp(const sds s1, const sds s2);
-/*
- *字符串内容分割 返回sds数组 以及分割的sds个数
- */
+
+/*字符串内容分割 返回sds数组 以及分割的sds个数*/
 sds *sds_split_len(const char *s, int len, const char *sep, int seplen, int *count);
-/*
- *释放sds数组空间
- */
+
+/*释放sds数组空间*/
 void sds_free_splitres(sds *tokens, int count);
-/*
- *字符串全部转小写
- */
+
+/*字符串全部转小写*/
 void sds_to_lower(sds s);
-/*
- *字符串全部转大写
- */
+
+/*字符串全部转大写*/
 void sds_to_upper(sds s);
-/*
- *转64位数字为sds
- */
+
+/*转64位数字为sds*/
 sds sds_from_ll(long long value);
-/*
- *从s中获得long long的数值
- */
+
+/*从s中获得long long的数值 */
 int sds_to_ll(const char *s, size_t slen, long long *value); 
-/*
- *追加转移字符到sds结构中
- */
+
+/*追加转移字符到sds结构中*/
 sds sds_append_repr(sds s, const char *p, size_t len);
 sds *sds_split_targs(const char *line, int *argc);
-/*
- *对sds中的字符做从from到to的转化 from to 一一对应
- *
- *setlen是from和to的长度
- */
+
+/*对sds中的字符做从from到to的转化 from to 一一对应*/
+/*setlen是from和to的长度*/
 sds sds_map_chars(sds s, const char *from, const char *to, size_t setlen);
-/*
- *通过sep链接argv中的参数 返回sds
- */
+
+/*通过sep链接argv中的参数 返回sds*/
 sds sds_join(char **argv, int argc, char *sep);
-/*
- *通过sep链接argv中的参数 argv是sds结构
- */
+
+/*通过sep链接argv中的参数 argv是sds结构*/
 sds sds_join_string(sds *argv, int argc, const char *sep, size_t seplen);
 
-/* Low level functions exposed to the user API */
-/*
- *为s扩展addlen个长度空间
- */
+/*Low level functions exposed to the user API */
+/*为s扩展addlen个长度空间*/
 sds sds_make_room_for(sds s, size_t addlen);
-/*
- *为s增加incr个长度的空间
- */
+
+/*为s增加incr个长度的空间 */
 void sds_incr_len(sds s, int incr);
-/*
- *释放s中未被使用的空间
- */
+
+/*释放s中未被使用的空间*/
 sds sds_remove_free_space(sds s);
-/*
- *返回s申请的总空间长度
- */
+
+/*返回s申请的总空间长度*/
 size_t sds_alloc_size(sds s);
-/*
- *返回s的头指针
- */
+
+/*返回s的头指针*/
 void *sds_alloc_ptr(sds s);
 
 #endif

@@ -27,6 +27,8 @@
 
 #if defined (_WIN32) || defined (WIN64)
 #define WINDOWS_PLATFORM
+#define NN_HAVE_WINDOWS
+#define NN_ATOMIC_WINAPI
 #endif
 
 #ifdef WINDOWS_PLATFORM //是WINDOWS平台
@@ -56,6 +58,7 @@
 #define HAVE_EPOLL 1
 /* Test for backtrace */
 #define NN_HAVE_BACKTRACE 1
+#define NN_ATOMIC_GCC_BUILTINS
 #endif
     
 #if defined __GNUC__ || defined __llvm__

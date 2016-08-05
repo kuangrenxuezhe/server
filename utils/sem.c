@@ -91,7 +91,7 @@ int nn_sem_wait (struct nn_sem *self)
     return 0;
 }
 
-#elif defined NN_HAVE_WINDOWS
+#elif defined WINDOWS_PLATFORM
 
 void nn_sem_init (struct nn_sem *self)
 {

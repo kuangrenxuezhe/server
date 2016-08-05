@@ -49,7 +49,7 @@ struct nn_sem {
     int signaled;
 };
 
-#elif defined NN_HAVE_WINDOWS
+#elif defined WINDOWS_PLATFORM
 
 #include "win.h"
 

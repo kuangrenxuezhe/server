@@ -26,7 +26,7 @@
 
 #include <stdlib.h>
 
-#ifdef NN_HAVE_WINDOWS
+#ifdef WINDOWS_PLATFORM
 
 void nn_mutex_init (nn_mutex_t *self)
 {

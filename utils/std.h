@@ -25,12 +25,31 @@
 
 #include <stddef.h>
 
-#ifdef __linux__
-#include <linux/version.h>
-#include <features.h>
+#if defined (_WIN32) || defined (WIN64)
+#define WINDOWS_PLATFORM
+#endif
+
+#ifdef WINDOWS_PLATFORM //是WINDOWS平台
+    typedef __int8            int8_t;
+    typedef __int16           int16_t;
+    typedef __int32           int32_t;
+    typedef __int64           int64_t;
+    typedef unsigned __int8   uint8_t;
+    typedef unsigned __int16  uint16_t;
+    typedef unsigned __int32  uint32_t;
+    typedef unsigned __int64  uint64_t;
+#else
+    #include <sys/types.h>
+    typedef u_int8_t    uint8_t;
+    typedef u_int16_t   uint16_t;
+    typedef u_int32_t   uint32_t;
+    typedef u_int64_t   uint64_t;
 #endif
 
 #ifdef __linux__
+#include <linux/version.h>
+#include <features.h>
+
 /* Test for proc filesystem */
 #define HAVE_PROC_STAT 1
 /* Test for polling API */
@@ -38,11 +57,6 @@
 /* Test for backtrace */
 #define NN_HAVE_BACKTRACE 1
 #endif
-
-/*  Takes a pointer to a member variable and computes pointer to the structure
-    that contains it. 'type' is type of the structure, not the member. */
-#define nn_cont(ptr, type, member) \
-    (ptr ? ((type*) (((char*) ptr) - offsetof(type, member))) : NULL)
     
 #if defined __GNUC__ || defined __llvm__
 #define NN_UNUSED __attribute__ ((unused))
@@ -54,24 +68,9 @@
 #define nn_slow(x) (x)
 #endif
 
-#if defined(_AIX)
-#define _ALL_SOURCE
-#endif
-
-#if defined(__linux__) || defined(__OpenBSD__)
-#define _XOPEN_SOURCE 700
-/*
- * On NetBSD, _XOPEN_SOURCE undefines _NETBSD_SOURCE and
- * thus hides inet_aton etc.
- */
-#elif !defined(__NetBSD__)
-#define _XOPEN_SOURCE
-#endif
-
-#if defined(__sun)
-#define _POSIX_C_SOURCE 199506L
-#endif
-
-#define _FILE_OFFSET_BITS 64
+/*  Takes a pointer to a member variable and computes pointer to the structure
+    that contains it. 'type' is type of the structure, not the member. */
+#define nn_cont(ptr, type, member) \
+    (ptr ? ((type*) (((char*) ptr) - offsetof(type, member))) : NULL)
 
 #endif

@@ -14,6 +14,7 @@
 #include <errno.h>
 #include <stdarg.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include "anet.h"
 #include "ae.h"
 #include "std.h"
@@ -209,7 +210,12 @@ void serverLogRaw(int level, const char *msg) {
         int role_char;
 
         gettimeofday(&tv,NULL);
+#ifdef WINDOWS_PLATFORM
         off = strftime(buf,sizeof(buf),"%d %b %H:%M:%S.",localtime(&tv.tv_sec));
+#else
+		struct tm sTm4tNow;
+        off = strftime(buf,sizeof(buf),"%d %b %H:%M:%S.",localtime_r(&tv.tv_sec,&sTm4tNow));
+#endif
         snprintf(buf+off,sizeof(buf)-off,"%03d",(int)tv.tv_usec/1000);
         fprintf(fp,"%d %s %c %s\n",
                 (int)getpid(), buf,c[level],msg);

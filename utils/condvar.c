@@ -24,7 +24,7 @@
 #include "condvar.h"
 #include "err.h"
 
-#if NN_HAVE_WINDOWS
+#if WINDOWS_PLATFORM
 
 int nn_condvar_init (nn_condvar_t *cond)
 {
@@ -72,7 +72,7 @@ void nn_condvar_broadcast (nn_condvar_t *cond)
     WakeAllConditionVariable (&cond->cv);
 }
 
-#else /* !NN_HAVE_WINDOWS */
+#else /* !WINDOWS_PLATFORM */
 
 #include <sys/time.h>
 

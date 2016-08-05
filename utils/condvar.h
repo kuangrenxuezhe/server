@@ -25,13 +25,13 @@
 
 #include "mutex.h"
 
-#ifdef NN_HAVE_WINDOWS
+#ifdef WINDOWS_PLATFORM
 #include "win.h"
 struct nn_condvar {
     CONDITION_VARIABLE cv;
 };
 
-#else /* !NN_HAVE_WINDOWS */
+#else /* !WINDOWS_PLATFORM */
 
 #include <pthread.h>
 
@@ -39,7 +39,7 @@ struct nn_condvar {
     pthread_cond_t cv;
 };
 
-#endif /* NN_HAVE_WINDOWS */
+#endif /* WINDOWS_PLATFORM */
 
 typedef struct nn_condvar nn_condvar_t;
 

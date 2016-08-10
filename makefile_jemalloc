@@ -1,0 +1,1 @@
+g++ -g -o jemalloc_x  main.cpp *.c -lpthread  -I. -Ijemalloc/include -Ljemalloc/libjemalloc.a  -ldl -DJEMALLOC_NO_DEMANGLE -static  -DUSE_JEMALLOC

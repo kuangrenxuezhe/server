@@ -1,6 +1,5 @@
 /*
     Copyright (c) 2012-2013 Martin Sustrik  All rights reserved.
-    Copyright (c) 2014 Achille Roussel All rights reserved.
 
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"),
@@ -21,10 +20,42 @@
     IN THE SOFTWARE.
 */
 
+#include "thread.h"
 #include "err.h"
 
-#include <signal.h>
+#ifdef NN_HAVE_WINDOWS
+static unsigned int __stdcall nn_thread_main_routine (void *arg)
+{
+    struct nn_thread *self;
 
+    self = (struct nn_thread*) arg;
+    self->routine (self->arg);
+    return 0;
+}
+
+void nn_thread_init (struct nn_thread *self,
+    nn_thread_routine *routine, void *arg)
+{
+    self->routine = routine;
+    self->arg = arg;
+    self->handle = (HANDLE) _beginthreadex (NULL, 0,
+        nn_thread_main_routine, (void*) self, 0 , NULL);
+    win_assert (self->handle != NULL);
+}
+
+void nn_thread_term (struct nn_thread *self)
+{
+    DWORD rc;
+    BOOL brc;
+
+    rc = WaitForSingleObject (self->handle, INFINITE);
+    win_assert (rc != WAIT_FAILED);
+    brc = CloseHandle (self->handle);
+    win_assert (brc != 0);
+}
+
+#else
+#include <signal.h>
 static void *nn_thread_main_routine (void *arg)
 {
     struct nn_thread *self;
@@ -69,3 +100,4 @@ void nn_thread_term (struct nn_thread *self)
     rc = pthread_join (self->handle, NULL);
     errnum_assert (rc == 0, rc);
 }
+#endif

@@ -1,5 +1,5 @@
 /*
-    Copyright (c) 2013 Martin Sustrik  All rights reserved.
+    Copyright (c) 2012-2013 Martin Sustrik  All rights reserved.
 
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"),
@@ -20,11 +20,34 @@
     IN THE SOFTWARE.
 */
 
-#include "win.h"
+#ifndef NN_THREAD_INCLUDED
+#define NN_THREAD_INCLUDED
 
+/*  Platform independent implementation of threading. */
+
+typedef void (nn_thread_routine) (void*);
+
+#if defined NN_HAVE_WINDOWS
+#include "win.h"
 struct nn_thread
 {
     nn_thread_routine *routine;
     void *arg;
     HANDLE handle;
 };
+#else
+#include <pthread.h>
+struct nn_thread
+{
+    nn_thread_routine *routine;
+    void *arg;
+    pthread_t handle;
+};
+#endif
+
+void nn_thread_init (struct nn_thread *self,
+    nn_thread_routine *routine, void *arg);
+void nn_thread_term (struct nn_thread *self);
+
+#endif
+

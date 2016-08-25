@@ -29,8 +29,8 @@
 #define C_OK                    0
 #define C_ERR                   -1
 
-#define LOG_MAX_LEN    1024 /* Default maximum length of syslog messages */
-#define ANET_ERR_LEN 256
+#define LOG_MAX_LEN     1024 /* Default maximum length of syslog messages */
+#define ANET_ERR_LEN    256
 #define CONFIG_DEFAULT_TCP_BACKLOG       511     /* TCP listen backlog */
 #define CONFIG_DEFAULT_SERVER_PORT       12318     /* TCP port */
 #define CONFIG_BINDADDR_MAX 16
@@ -40,9 +40,9 @@
 #define PROTO_REPLY_CHUNK_BYTES (16*1024) /* 16k output buffer */
 #define PROTO_INLINE_MAX_SIZE   (1024*64) /* Max size of inline reads */
 #define PROTO_MBULK_BIG_ARG     (1024*32)
-#define LONG_STR_SIZE      21          /* Bytes needed for long -> str + '\0' */
-#define AOF_AUTOSYNC_BYTES (1024*1024*32) /* fdatasync every 32MB */
-#define NET_IP_STR_LEN 46 /* INET6_ADDRSTRLEN is 46, but we need to be sure */
+#define LONG_STR_SIZE           21          /* Bytes needed for long -> str + '\0' */
+#define AOF_AUTOSYNC_BYTES      (1024*1024*32) /* fdatasync every 32MB */
+#define NET_IP_STR_LEN          46 /* INET6_ADDRSTRLEN is 46, but we need to be sure */
 
 #define UNUSED(V) ((void) V)
 /* Socket status */
@@ -62,8 +62,8 @@ typedef struct socketLink {
     int fd;                     /* TCP socket file descriptor */
     sds sndbuf;                 /* Packet send buffer */
     sds rcvbuf;                 /* Packet reception buffer */
-    sds tmpbuf;
-    int status;
+    sds tmpbuf;                 /* Packet temp buffer */
+    int status;                 /* Socket status */
     struct nn_queue_item item;  /* Queue of task */
 } socketLink;
 
@@ -127,11 +127,11 @@ typedef struct cmd_entry {
     hash_item item;    
 } cmd_entry;
 
-void populateCommandTable(void) {
-    int j;
+void initCommandTable(void) {
     cmd_entry *item;
-    int numcommands = sizeof(redisCommandTable)/sizeof(struct redisCommand);
+    int j;
 
+    int numcommands = sizeof(redisCommandTable)/sizeof(struct redisCommand);
     for (j = 0; j < numcommands; j++) {
         struct redisCommand *cmd = redisCommandTable+j;
         item = (cmd_entry *)nn_malloc(sizeof(*item));
@@ -142,7 +142,7 @@ void populateCommandTable(void) {
     }
 }
 
-void cleanCommandTable(void) {
+void termCommandTable(void) {
     hash_item *it; 
     cmd_entry *item;
     int j, numcommands;
@@ -626,7 +626,7 @@ int aeTest(void) {
     struct queue_thread_info *thread_info;
     initServerConfig();
     nn_alloc_init(1,0);
-    populateCommandTable();
+    initCommandTable();
 
     threads = nn_malloc(sizeof(*threads)*server.working_thread);
     if(threads == 0)
@@ -652,8 +652,7 @@ int aeTest(void) {
         return -1;
 
     for (j = 0; j < server.ipfd_count; j++) {
-        if (aeCreateFileEvent(server.el, server.ipfd[j], AE_READABLE, acceptTcpHandler,NULL) == AE_ERR)
-        {
+        if (aeCreateFileEvent(server.el, server.ipfd[j], AE_READABLE, acceptTcpHandler,NULL) == AE_ERR) {
             printf("Unrecoverable error creating server.ipfd file event.");
         }
     }
@@ -669,7 +668,7 @@ int aeTest(void) {
     nn_free(thread_info);
 clean_threads:
     nn_free(threads);
-    cleanCommandTable();
+    termCommandTable();
     termServerConfig();
     return 0;
 }

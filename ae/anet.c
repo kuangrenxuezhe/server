@@ -649,3 +649,4 @@ int anetFormatSock(int fd, char *fmt, size_t fmt_len) {
     anetSockName(fd,ip,sizeof(ip),&port);
     return anetFormatAddr(fmt, fmt_len, ip, port);
 }
+
